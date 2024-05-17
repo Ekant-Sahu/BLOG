@@ -5,10 +5,12 @@ import SingUp from './pages/SingUp'
 import Dashboard from './pages/Dashboard'
 import LogIn from './pages/LogIn'
 import Post from './pages/Post'
+import Header from './componentes/Header'
 
 export default function App() {
   return (
     <BrowserRouter>
+    <Header />
     <Routes>
       <Route path = "/" element = {<Home />}></Route>
       <Route path = "/about" element = {<About />}></Route>
