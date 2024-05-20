@@ -1,11 +1,13 @@
-import { Navbar } from 'flowbite-react'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Navbar,Dropdown, Avatar } from 'flowbite-react'
+import React, { useState,useEffect } from 'react'
+import { useSelector } from 'react-redux'
+
 
 export default function Header() {
-  return (
-    
 
+  const {currentUser} = useSelector(state=>state.user)
+
+  return (
 <nav className="bg-white border-gray-200 dark:bg-gray-900">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="https://flowbite.com/" className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -54,12 +56,37 @@ export default function Header() {
             <li>
               <a href="/post" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Posts</a>
             </li>
-            <li>
+            {/* <li>
               <a href="/sign-up" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Sign Up</a>
+            </li> */}
+            {currentUser ? (
+              <li>
+              <Dropdown 
+              arrowIcon={false}
+              inline
+              label = {
+                <Avatar
+                  alt = 'user'
+                  img = {currentUser.profilePicture}
+                  rounded />
+              }>
+                <Dropdown.Header>
+                  <span className="block text-sm">@{currentUser.username}</span>
+                </Dropdown.Header>
+                  <a href="/dashboard?tab=profile">
+                  <Dropdown.Item>PROFILE</Dropdown.Item>
+                  </a>
+                  <Dropdown.Divider />
+                  <Dropdown.Item>LOG OUT</Dropdown.Item>
+              </Dropdown>
             </li>
+            ): (
             <li>
               <a href="/log-in" className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">Log In</a>
             </li>
+            )
+          }
+            
           </ul>
         </div>
       </div>

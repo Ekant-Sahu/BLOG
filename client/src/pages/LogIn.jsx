@@ -68,7 +68,7 @@ export default function LogIn() {
       </form>
       <div className="flex gap-2 text-sm mt-5 max-w-sm mx-auto">
         <span>Don't have an account?</span>
-        <a href="log-in" className="text-blue-500">Sign up here</a>
+        <a href="/sign-up" className="text-blue-500">Sign up here</a>
       </div>
       <div className="flex gap-2 text-sm mt-5 max-w-sm mx-auto bg-red-50">
       {
