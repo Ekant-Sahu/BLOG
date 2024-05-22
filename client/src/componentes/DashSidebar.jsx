@@ -4,7 +4,28 @@ import {HiUser,HiArrowSmRight} from 'react-icons/hi'
 import {useLocation} from 'react-router-dom'
 import { useState,useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { logout } from '../redux/user/userSlice'
+
 export default function DashSidebar() {
+    const dispatch = useDispatch();
+    const handleLogOut = async() =>{
+        try{
+          const res = await fetch('api/user/logout',{
+            method: 'POST',
+          })
+          const data = await res.json();
+          if(!res.ok){
+            console.log(data.message);
+          }else{
+            dispatch(logout());
+          }
+        } catch(error){
+          console.log(error.message)
+        }
+      }
+
+
     const location = useLocation();
     const [tab,setTab] = useState('');
     useEffect(()=>{
@@ -67,7 +88,7 @@ export default function DashSidebar() {
                                     <path d="M16.975 11H10V4.025a1 1 0 0 0-1.066-.998 8.5 8.5 0 1 0 9.039 9.039.999.999 0 0 0-1-1.066h.002Z"/>
                                     <path d="M12.5 0c-.157 0-.311.01-.565.027A1 1 0 0 0 11 1.02V10h8.975a1 1 0 0 0 1-.935c.013-.188.028-.374.028-.565A8.51 8.51 0 0 0 12.5 0Z"/>
                                 </svg>
-                                <span className="ms-3">Log Out</span>
+                                <span className="ms-3" onClick={handleLogOut}>Log Out</span>
                             </a>
                             
                         </li>

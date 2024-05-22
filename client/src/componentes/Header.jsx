@@ -1,9 +1,26 @@
 import { Navbar,Dropdown, Avatar } from 'flowbite-react'
 import React, { useState,useEffect } from 'react'
 import { useSelector } from 'react-redux'
-
+import { useDispatch } from 'react-redux'
+import { logout } from '../redux/user/userSlice'
 
 export default function Header() {
+  const dispatch = useDispatch();
+  const handleLogOut = async() =>{
+    try{
+      const res = await fetch('api/user/logout',{
+        method: 'POST',
+      })
+      const data = await res.json();
+      if(!res.ok){
+        console.log(data.message);
+      }else{
+        dispatch(logout());
+      }
+    } catch(error){
+      console.log(error.message)
+    }
+  }
 
   const {currentUser} = useSelector(state=>state.user)
 
@@ -78,7 +95,7 @@ export default function Header() {
                   <Dropdown.Item>PROFILE</Dropdown.Item>
                   </a>
                   <Dropdown.Divider />
-                  <Dropdown.Item>LOG OUT</Dropdown.Item>
+                  <Dropdown.Item onClick={handleLogOut}>LOG OUT</Dropdown.Item>
               </Dropdown>
             </li>
             ): (
