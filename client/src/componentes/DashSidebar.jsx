@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 
 export default function DashSidebar() {
     const dispatch = useDispatch();
-    const {currentUser} = useSelector(state => state.user);
+    const {currentUser} = useSelector((state) => state.user);
     const handleLogOut = async() =>{
         try{
           const res = await fetch('api/user/logout',{

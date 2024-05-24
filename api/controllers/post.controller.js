@@ -59,3 +59,22 @@ export const getposts = async(req, res, next) => {
         next(error);
     }
 }
+
+export const deletepost = async (req, res, next) => {
+    try {
+        // Check if the user is the author of the post
+        const post = await Post.findById(req.params.postId);
+        if (!post) {
+            return next(errorHandler(404, "Post not found"));
+        }
+        if (req.params.userId !== req.user.id) {
+            return next(errorHandler(403, "You are not allowed to delete this post"));
+        }
+
+        // Delete the post
+        await Post.findByIdAndDelete(req.params.postId);
+        res.status(200).json('The Post has been deleted');
+    } catch (e) {
+        next(e);
+    }
+}
