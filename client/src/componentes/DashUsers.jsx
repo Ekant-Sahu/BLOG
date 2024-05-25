@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import {useSelector} from 'react-redux'
 import { Link } from 'react-router-dom';
-export default function DashPost() {
+import { CiCircleCheck,CiCircleRemove } from "react-icons/ci";
+export default function DashUsers() {
     const {currentUser} = useSelector((state) => state.user);
-    const [userPost, setUserPost] = useState([]);
+    const [users, setUsers] = useState([]);
     const [showModel,setShowModel] = useState(false);
     const [showMore,setShowMore] = useState(true);
-    const [postIdToDelete,setPostIdToDelete] = useState('');
+    const [userIdToDelete,setUserIdToDelete] = useState('');
     const handleDelete = async () =>{
       setShowModel(false);
       try{
-        const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentUser._id}`,{
+        const res = await fetch(`/api/user/delete/${userIdToDelete}`,{
           method: 'DELETE',
         })
         const data = await res.json();
@@ -18,8 +19,8 @@ export default function DashPost() {
           console.log(data.message);
         }
         else{
-          setUserPost((prev)=>
-            prev.filter((post)=>post.id !== postIdToDelete));
+          setUsers((prev)=>
+            prev.filter((user)=>user.id !== userIdToDelete))
           setShowModel(false);
         }
 
@@ -30,13 +31,13 @@ export default function DashPost() {
     }
 
     const handleShowMore = async () => {
-      const startIndex = userPost.length;
+      const startIndex = users.length;
       try{
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+        const res = await fetch(`api/user/getusers?startIndex=${startIndex}`);
         const data = await res.json();
         if(res.ok){
-          setUserPost((prev) => [...prev, ...data.posts]);
-          if(data.posts.length<9){
+          setUsers((prev) => [...prev, ...data.users]);
+          if(data.users.length<9){
             setShowMore(false);
           }
         }
@@ -47,14 +48,14 @@ export default function DashPost() {
 
 
   useEffect(()=>{
-    const fetchPosts = async () =>{   
+    const fetchUsers = async () =>{   
       try {
         if (currentUser && currentUser.isAdmin) { // Check if currentUser is defined and isAdmin
-          const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+          const res = await fetch(`/api/user/getusers`);
           const data = await res.json();
           if (res.ok) {
-            setUserPost(data.posts);
-            if(data.length<9){
+            setUsers(data.users);
+            if(data.users.length<9){
               setShowMore(false);
             }
           }
@@ -64,60 +65,50 @@ export default function DashPost() {
       }
     };
     if(currentUser.isAdmin) {
-      fetchPosts();
+      fetchUsers();
     }
   },[currentUser._id]);
   return (
     <div className="p-4 relative min-h-screen md:ml-64">
-      {currentUser.isAdmin && userPost.length > 0 ? (
+      {currentUser.isAdmin && users.length > 0 ? (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" className="px-6 py-3">
-                        Date updated
+                        Date Created
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        Post image
+                        User Image
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        Category
+                        Username
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        title
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                        Edit
+                        Admin
                     </th>
                     <th scope="col" className="px-6 py-3">
                         Delete
                     </th>
                 </tr>
             </thead>
-            {userPost.map((post) => (
-              <tbody key={post._id}>
+            {users.map((user) => (
+              <tbody key={user._id}>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {new Date(post.updatedAt).toLocaleDateString()}
+                  {new Date(user.createdAt).toLocaleDateString()}
                   </th>
                   <td className="px-6 py-4">
-                      <Link to={`/post/${post.slug}`}>
-                          <img src={post.image} alt={post.title} className='w-20 h-10 object-cover bg-gray-500' />
-                      </Link>
+                    <img src={user.profilePicture} alt={user.username} className='w-10 h-10 rounded-full object-cover bg-gray-500' />
                   </td>
                   <td className="px-6 py-4">
-                      {post.category}
+                      {user.username}
                   </td>
                   <td className="px-6 py-4">
-                      <Link to={`/post/${post.slug}`}>
-                          {post.title}
-                      </Link>
+                      {user.isAdmin ? <CiCircleCheck className='w-20 h-10 object-cover'/> : <CiCircleRemove className='w-20 h-10 object-cover'/>}
                   </td>
                   <td className="px-6 py-4">
-                      <a href={`/update-post/${post._id}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                  </td>
-                  <td className="px-6 py-4">
-                  <span onClick={()=>{setShowModel(true);setPostIdToDelete(post._id);}} className='text-red-500 cursor-pointer'>Delet</span>
+                  <span onClick={()=>{setShowModel(true);setUserIdToDelete(user._id);}} className='text-red-500 cursor-pointer'>Delet</span>
                   </td>
               </tr>
           </tbody>
@@ -165,7 +156,7 @@ export default function DashPost() {
                             <svg className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>
-                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this post?</h3>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this user?</h3>
                             <button
                               onClick={handleDelete}
                               type="button"
@@ -190,7 +181,7 @@ export default function DashPost() {
     </div>
         
       ):(
-        <p>you have no post yet</p>
+        <p>you have no user yet</p>
       )}
       </div>
   )

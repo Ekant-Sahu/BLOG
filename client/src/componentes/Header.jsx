@@ -79,7 +79,8 @@ export default function Header() {
             </li> */}
             {currentUser ? (
               <li>
-              <Dropdown 
+              <Dropdown
+              className='z-10' 
               arrowIcon={false}
               inline
               label = {
