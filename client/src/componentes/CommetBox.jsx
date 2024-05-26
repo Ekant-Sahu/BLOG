@@ -57,7 +57,7 @@ export default function CommentBox({ comment, onLike,onEdit, onDelete }) {
       </div>
       <div className='flex-1'>
         <div className='flex mb-1'>
-          <div className='flex flex-col'>
+          <div className='flex flex-col md:flex-row'>
             <div className='font-bold mr-1 text-sm truncate'>{user ? `@${user.username}` : 'anonymous user'}</div>
             <div className='text-gray-500 text-xs'>-{moment(comment.createdAt).fromNow()}</div>
           </div>

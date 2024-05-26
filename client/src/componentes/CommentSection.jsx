@@ -107,7 +107,7 @@ export default function CommentSection({postId}) {
 
 
   return (
-    <div className='max-w-4xl w-full mx-auto p-3'>
+    <div className='max-w-7xl w-full mx-auto p-3'>
     {currentUser ? (
         <div className='flex items-center gap-1 my-5 text-gray text-lg'>
             <p>Signed in as:</p>
