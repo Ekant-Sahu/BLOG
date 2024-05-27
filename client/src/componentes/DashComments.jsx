@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import {useSelector} from 'react-redux'
-import { Link } from 'react-router-dom';
-import { CiCircleCheck,CiCircleRemove } from "react-icons/ci";
-export default function DashUsers() {
+
+export default function DashComments() {
     const {currentUser} = useSelector((state) => state.user);
-    const [users, setUsers] = useState([]);
+    const [comments, setComments] = useState([]);
     const [showModel,setShowModel] = useState(false);
     const [showMore,setShowMore] = useState(true);
-    const [userIdToDelete,setUserIdToDelete] = useState('');
+    const [commentIdToDelete,setCommentIdToDelete] = useState('');
     const handleDelete = async () =>{
       setShowModel(false);
       try{
-        const res = await fetch(`/api/user/delete/${userIdToDelete}`,{
+        const res = await fetch(`/api/comment/deleteComment/${commentIdToDelete}`,{
           method: 'DELETE',
         })
         const data = await res.json();
@@ -19,8 +18,8 @@ export default function DashUsers() {
           console.log(data.message);
         }
         else{
-          setUsers((prev)=>
-            prev.filter((user)=>user.id !== userIdToDelete))
+          setComments((prev)=>
+            prev.filter((comment)=>comment.id !== commentIdToDelete))
           setShowModel(false);
         }
 
@@ -31,13 +30,13 @@ export default function DashUsers() {
     }
 
     const handleShowMore = async () => {
-      const startIndex = users.length;
+      const startIndex = comments.length;
       try{
-        const res = await fetch(`/api/user/getusers?startIndex=${startIndex}`);
+        const res = await fetch(`/api/comment/getcomments?startIndex=${startIndex}`);
         const data = await res.json();
         if(res.ok){
-          setUsers((prev) => [...prev, ...data.users]);
-          if(data.users.length<9){
+          setUsers((prev) => [...prev, ...data.comments]);
+          if(data.comments.length<9){
             setShowMore(false);
           }
         }
@@ -48,14 +47,14 @@ export default function DashUsers() {
 
 
   useEffect(()=>{
-    const fetchUsers = async () =>{   
+    const fetchComments = async () =>{   
       try {
         if (currentUser && currentUser.isAdmin) { // Check if currentUser is defined and isAdmin
-          const res = await fetch(`/api/user/getusers`);
+          const res = await fetch(`/api/comment/getcomments`);
           const data = await res.json();
           if (res.ok) {
-            setUsers(data.users);
-            if(data.users.length<9){
+            setComments(data.comments);
+            if(data.comments.length<9){
               setShowMore(false);
             }
           }
@@ -65,12 +64,12 @@ export default function DashUsers() {
       }
     };
     if(currentUser.isAdmin) {
-      fetchUsers();
+      fetchComments();
     }
   },[currentUser._id]);
   return (
     <div className="p-4 relative min-h-screen md:ml-64">
-      {currentUser.isAdmin && users.length > 0 ? (
+      {currentUser.isAdmin && comments.length > 0 ? (
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -79,36 +78,42 @@ export default function DashUsers() {
                         Date Created
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        User Image
+                        Comment content
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        Username
+                        Number of likes
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        Admin
+                        Post ID
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        User Id
                     </th>
                     <th scope="col" className="px-6 py-3">
                         Delete
                     </th>
                 </tr>
             </thead>
-            {users.map((user) => (
-              <tbody key={user._id}>
+            {comments.map((comments) => (
+              <tbody key={comments._id}>
               <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {new Date(user.createdAt).toLocaleDateString()}
+                  {new Date(comments.updatedAt).toLocaleDateString()}
                   </th>
                   <td className="px-6 py-4">
-                    <img src={user.profilePicture} alt={user.username} className='w-10 h-10 rounded-full object-cover bg-gray-500' />
+                    {comments.content}
                   </td>
                   <td className="px-6 py-4">
-                      {user.username}
+                      {comments.numberOfLike}
                   </td>
                   <td className="px-6 py-4">
-                      {user.isAdmin ? <CiCircleCheck className='w-20 h-10 object-cover'/> : <CiCircleRemove className='w-20 h-10 object-cover'/>}
+                      {comments.userId}
                   </td>
                   <td className="px-6 py-4">
-                  <span onClick={()=>{setShowModel(true);setUserIdToDelete(user._id);}} className='text-red-500 cursor-pointer'>Delet</span>
+                      {comments.postId}
+                  </td>
+                  <td className="px-6 py-4">
+                  <span onClick={()=>{setShowModel(true);setCommentIdToDelete(comments._id);}} className='text-red-500 cursor-pointer'>Delete</span>
                   </td>
               </tr>
           </tbody>
@@ -156,7 +161,7 @@ export default function DashUsers() {
                             <svg className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                               <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                             </svg>
-                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this user?</h3>
+                            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this comment?</h3>
                             <button
                               onClick={handleDelete}
                               type="button"
@@ -181,7 +186,7 @@ export default function DashUsers() {
     </div>
         
       ):(
-        <p>you have no user yet</p>
+        <p>you have no comments yet</p>
       )}
       </div>
   )

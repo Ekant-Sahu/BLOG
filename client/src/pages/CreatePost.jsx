@@ -96,8 +96,12 @@ export default function CreatePost() {
             }}
           >
             <option value="uncategorized">Select a Category</option>
+            <option value="sports">Sports</option>
+            <option value="entertainment">Entertainment</option>
             <option value="raipur">Raipur</option>
             <option value="bilaspur">Bilaspur</option>
+            <option value="india">india</option>
+            <option value="foregin">foregin</option>
           </Select>
         </div>
         <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-5 my-2 mx-1">
@@ -128,6 +132,7 @@ export default function CreatePost() {
           publishError && <Alert className='bg-red-500'>{publishError}</Alert>
         }
       </form>
+      
     </div>
   )
 }
