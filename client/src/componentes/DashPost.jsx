@@ -32,7 +32,7 @@ export default function DashPost() {
     const handleShowMore = async () => {
       const startIndex = userPost.length;
       try{
-        const res = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+        const res = await fetch(`/api/post/getposts?startIndex=${startIndex}`);
         const data = await res.json();
         if(res.ok){
           setUserPost((prev) => [...prev, ...data.posts]);
@@ -50,7 +50,7 @@ export default function DashPost() {
     const fetchPosts = async () =>{   
       try {
         if (currentUser && currentUser.isAdmin) { // Check if currentUser is defined and isAdmin
-          const res = await fetch(`/api/post/getposts?userId=${currentUser._id}`);
+          const res = await fetch(`/api/post/getposts`);
           const data = await res.json();
           if (res.ok) {
             setUserPost(data.posts);
